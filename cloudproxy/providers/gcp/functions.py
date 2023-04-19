@@ -20,16 +20,30 @@ if gcp["enabled"] == 'True':
         logger.error("GCP -> Invalid service account key")
 
 
+def create_address():
+    body = {
+        'name': 'ip-cloudproxy-' + str(uuid.uuid4())
+    }
+
+    response = compute.addresses().insert(
+        project=gcp["project"],
+        zone=gcp["zone"],
+        body=body
+    )
+    return response['address']
+
 def create_proxy():
     image_response = compute.images().getFromFamily(
-        project=gcp["image_project"], 
+        project=gcp["image_project"],
         family=gcp["image_family"]
     ).execute()
     source_disk_image = image_response['selfLink']
 
+    ip_address = create_address()
+
     body = {
         'name': 'cloudproxy-' + str(uuid.uuid4()),
-        'machineType': 
+        'machineType':
             f"zones/{gcp['zone']}/machineTypes/{gcp['size']}",
         'tags': {
             'items': [
@@ -52,9 +66,9 @@ def create_proxy():
             'network': 'global/networks/default',
             'accessConfigs': [
                 {
-                    'name': 'External NAT', 
+                    'name': 'External NAT',
                     'type': 'ONE_TO_ONE_NAT',
-                    'networkTier': 'STANDARD'
+                    'natIP': ip_address
                 }
             ]
         }],
@@ -73,6 +87,8 @@ def create_proxy():
     ).execute()
 
 def delete_proxy(name):
+    create_proxy()
+    
     try:
         return compute.instances().delete(
             project=gcp["project"],
@@ -107,8 +123,8 @@ def start_proxy(name):
 
 def list_instances():
     result = compute.instances().list(
-        project=gcp["project"], 
-        zone=gcp["zone"], 
+        project=gcp["project"],
+        zone=gcp["zone"],
         filter='labels.cloudproxy eq cloudproxy'
     ).execute()
     return result['items'] if 'items' in result else []
