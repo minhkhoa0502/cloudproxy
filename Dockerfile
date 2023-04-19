@@ -10,10 +10,11 @@ WORKDIR /app/cloudproxy-ui
 RUN npm install
 RUN npm run build
 
+WORKDIR /app
+
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 
 COPY . /app
-WORKDIR /app
 
 ENTRYPOINT ["python","./cloudproxy/main.py"]
