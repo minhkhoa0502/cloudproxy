@@ -30,7 +30,7 @@ def create_address():
         project=gcp["project"],
         region=region,
         body=body
-    )
+    ).execute()
     return response['address']
 
 def create_proxy():
