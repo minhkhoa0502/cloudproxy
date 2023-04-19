@@ -21,7 +21,7 @@ if gcp["enabled"] == 'True':
 
 
 def create_address():
-    ip_address_name = 'ip-cloudproxy-' + str(uuid.uuid4()
+    ip_address_name = 'cloudproxy-' + str(uuid.uuid4())
     body = {
         'name': ip_address_name
     }
