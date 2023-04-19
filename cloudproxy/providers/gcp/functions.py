@@ -21,8 +21,9 @@ if gcp["enabled"] == 'True':
 
 
 def create_address():
+    ip_address_name = 'ip-cloudproxy-' + str(uuid.uuid4()
     body = {
-        'name': 'ip-cloudproxy-' + str(uuid.uuid4())
+        'name': ip_address_name
     }
     region = gcp["zone"][:-2]
 
@@ -31,8 +32,6 @@ def create_address():
         region=region,
         body=body
     ).execute()
-
-    ip_address_name = response['name']
 
     response = compute.addresses().get(
         project=gcp["project"],
