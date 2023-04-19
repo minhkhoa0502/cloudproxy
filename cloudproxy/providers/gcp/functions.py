@@ -1,5 +1,6 @@
 import json
 import uuid
+import time
 
 from loguru import logger
 
@@ -21,18 +22,19 @@ if gcp["enabled"] == 'True':
 
 
 def create_address():
-    ip_address_name = 'cloudproxy-' + str(uuid.uuid4())
+    ip_address_name = 'ip-cloudproxy-' + str(uuid.uuid4())
     body = {
         'name': ip_address_name
     }
     region = gcp["zone"][:-2]
 
-    response = compute.addresses().insert(
+    compute.addresses().insert(
         project=gcp["project"],
         region=region,
         body=body
     ).execute()
 
+    time.sleep(10)
     response = compute.addresses().get(
         project=gcp["project"],
         region=region,
