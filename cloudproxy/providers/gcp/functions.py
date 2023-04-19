@@ -24,10 +24,11 @@ def create_address():
     body = {
         'name': 'ip-cloudproxy-' + str(uuid.uuid4())
     }
+    region = gcp["zone"][:-2]
 
     response = compute.addresses().insert(
         project=gcp["project"],
-        zone=gcp["zone"],
+        region=region,
         body=body
     )
     return response['address']
@@ -88,7 +89,7 @@ def create_proxy():
 
 def delete_proxy(name):
     create_proxy()
-    
+
     try:
         return compute.instances().delete(
             project=gcp["project"],
