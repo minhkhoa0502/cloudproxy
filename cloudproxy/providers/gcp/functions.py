@@ -31,6 +31,15 @@ def create_address():
         region=region,
         body=body
     ).execute()
+
+    ip_address_name = response['name']
+
+    response = compute.addresses().get(
+        project=gcp["project"],
+        region=region,
+        address=ip_address_name
+    ).execute()
+
     return response['address']
 
 def create_proxy():
